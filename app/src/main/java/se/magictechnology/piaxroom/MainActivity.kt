@@ -3,6 +3,9 @@ package se.magictechnology.piaxroom
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.room.*
 
 class MainActivity : AppCompatActivity() {
@@ -31,6 +34,7 @@ class MainActivity : AppCompatActivity() {
         userDao.insertAll(someone3)
         */
 
+        /*
         val users: List<User> = userDao.getOlderThenPeople(7)
 
         Log.i("PIAXDEBUG", "ANTAL ANVÄNDARE: " + users.size.toString())
@@ -40,6 +44,24 @@ class MainActivity : AppCompatActivity() {
         {
             Log.i("PIAXDEBUG", theuser.uid.toString() + " " + theuser.firstName + " " + theuser.lastName + " " + theuser.age.toString())
         }
+
+         */
+
+
+        userDao.getOldPeople().observe(this, Observer {
+            for(theuser in it)
+            {
+                Log.i("PIAXDEBUG", theuser.uid.toString() + " " + theuser.firstName + " " + theuser.lastName + " " + theuser.age.toString())
+            }
+        })
+
+
+        findViewById<Button>(R.id.addbutton).setOnClickListener {
+            var addperson = User(0, "Ungperson", "Litensson", 3)
+
+            userDao.insertAll(addperson)
+        }
+
     }
 }
 
@@ -57,9 +79,9 @@ interface UserDao {
     fun getAll(): List<User>
 
     @Query("SELECT * FROM user WHERE age > 25")
-    fun getOldPeople(): List<User>
+    fun getOldPeople(): LiveData<List<User>>
 
-    @Query("SELECT * FROM user WHERE age > :years")
+    @Query("SELECT * FROM user WHERE age > :years ORDER BY age DESC")
     fun getOlderThenPeople(years : Int): List<User>
 
     @Query("SELECT * FROM user WHERE uid IN (:userIds)")
@@ -81,3 +103,29 @@ interface UserDao {
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
 }
+
+
+/*
+
+- Category
+-- id
+-- title
+
+- Book
+-- id
+-- category_id
+-- bookname
+-- bookdescription
+
+- Chapter
+-- id
+-- book_id
+-- chaptername
+
+SELECT * category
+
+SELECT * FROM book WHERE category_id = X
+
+SELECT * FROM chapter WHERE book_id = Y
+
+ */
