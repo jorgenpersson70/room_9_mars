@@ -29,12 +29,12 @@ class MainActivity : AppCompatActivity() {
         val userDao = db.userDao()
 
 
-        var someone1 = User(0, "Torsten", "Torstensson", 72)
+ /*       var someone1 = User(0, "Torsten", "Torstensson", 72)
         userDao.insertAll(someone1)
         var someone2 = User(0, "Babyperson", "Ungsson", 2)
         userDao.insertAll(someone2)
         var someone3 = User(0, "Medelperson", "Lagomsson", 30)
-        userDao.insertAll(someone3)
+        userDao.insertAll(someone3)*/
 
 
         /*
@@ -50,6 +50,8 @@ class MainActivity : AppCompatActivity() {
 
          */
 
+  /*      @Query("SELECT * FROM user WHERE age > 1")
+        fun getOldPeople(): LiveData<List<User>>*/
 
         userDao.getOldPeople().observe(this, Observer {
             for(theuser in it)
@@ -61,6 +63,18 @@ class MainActivity : AppCompatActivity() {
                 minAdapter.notifyDataSetChanged()
             }
         })
+
+  /*      @Query("SELECT * FROM user WHERE age > :years ORDER BY age DESC")
+        fun getOlderThenPeople(years : Int): List<User>*/
+
+        var myList = userDao.getOlderThenPeople(71)
+
+        for (i in 0..(myList.size-1)){
+            Log.i("MIN", myList[i].toString())
+        }
+
+
+
 
 
         findViewById<Button>(R.id.addbutton).setOnClickListener {
@@ -91,7 +105,11 @@ class MainActivity : AppCompatActivity() {
             userDao.insertAll(addperson)
 
             minAdapter.notifyDataSetChanged()
+
         }
+
+     /*   var User = userDao.findByName("Ungperson", "Litensson")
+        userDao.delete(User)*/
 
     }
 }
@@ -109,7 +127,7 @@ interface UserDao {
     @Query("SELECT * FROM user")
     fun getAll(): List<User>
 
-    @Query("SELECT * FROM user WHERE age > 25")
+    @Query("SELECT * FROM user WHERE age > 1")
     fun getOldPeople(): LiveData<List<User>>
 
     @Query("SELECT * FROM user WHERE age > :years ORDER BY age DESC")
