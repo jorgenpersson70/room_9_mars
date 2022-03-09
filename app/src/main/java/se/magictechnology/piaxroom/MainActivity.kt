@@ -4,12 +4,15 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.EditText
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.room.*
 
 class MainActivity : AppCompatActivity() {
-
+    var minAdapter = MinAdapter()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,14 +28,14 @@ class MainActivity : AppCompatActivity() {
 
         val userDao = db.userDao()
 
-        /*
+
         var someone1 = User(0, "Torsten", "Torstensson", 72)
         userDao.insertAll(someone1)
         var someone2 = User(0, "Babyperson", "Ungsson", 2)
         userDao.insertAll(someone2)
         var someone3 = User(0, "Medelperson", "Lagomsson", 30)
         userDao.insertAll(someone3)
-        */
+
 
         /*
         val users: List<User> = userDao.getOlderThenPeople(7)
@@ -52,6 +55,10 @@ class MainActivity : AppCompatActivity() {
             for(theuser in it)
             {
                 Log.i("PIAXDEBUG", theuser.uid.toString() + " " + theuser.firstName + " " + theuser.lastName + " " + theuser.age.toString())
+                minAdapter.firstnames.add(theuser.firstName.toString())
+                minAdapter.lastnames.add(theuser.lastName.toString())
+                minAdapter.ages.add(theuser.age.toString())
+                minAdapter.notifyDataSetChanged()
             }
         })
 
@@ -60,6 +67,30 @@ class MainActivity : AppCompatActivity() {
             var addperson = User(0, "Ungperson", "Litensson", 3)
 
             userDao.insertAll(addperson)
+        }
+
+        var myRecyclerView = findViewById<RecyclerView>(R.id.myRV)
+
+        myRecyclerView.layoutManager = LinearLayoutManager(this)
+        myRecyclerView.adapter = minAdapter
+
+        var radButton = findViewById<Button>(R.id.testBtn)
+        var firstNameET = findViewById<EditText>(R.id.firstNameET)
+        var lastNameET = findViewById<EditText>(R.id.lastNameET)
+        var ageET = findViewById<EditText>(R.id.ageET)
+        //var testa : Editable = ageET.text.toString().toEdi
+
+        radButton.setOnClickListener {
+            minAdapter.firstnames.add(firstNameET.text.toString())
+            minAdapter.lastnames.add(lastNameET.text.toString())
+            minAdapter.ages.add(ageET.text.toString())
+
+            var addperson = User(0, firstNameET.text.toString(), lastNameET.text.toString(), 58
+            )
+
+            userDao.insertAll(addperson)
+
+            minAdapter.notifyDataSetChanged()
         }
 
     }
